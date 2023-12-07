@@ -1,0 +1,14 @@
+---
+- name: Create /var/repos
+  become: true
+  ansible.builtin.file:
+    path: /var/repos
+    state: directory
+
+- name: Clone the Web Repo
+  become: true
+  ansible.builtin.git:
+    repo: https://github.com/khalford/MyWebProject.git
+    dest: /var/repos/MyWebProject
+    single_branch: yes
+    version: main

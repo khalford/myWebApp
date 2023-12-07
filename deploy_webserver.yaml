@@ -1,0 +1,13 @@
+---
+- name: Create VM
+  hosts: localhost
+  roles:
+  - create_vm
+
+- name: Deploy Webserver
+  hosts: all
+  roles:
+  - install_apache2
+  - git_clone
+  - copy_files
+  - apache2_config 

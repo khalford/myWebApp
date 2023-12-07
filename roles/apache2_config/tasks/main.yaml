@@ -1,0 +1,18 @@
+---
+- name: Copy Virtual Host file
+  become: true
+  ansible.builtin.copy:
+    src: webserver.conf
+    dest: /etc/apache2/sites-available
+   
+- name: Enable new site
+  become: true
+  ansible.builtin.command: a2ensite webserver
+
+- name: Disable default site
+  become: true
+  ansible.builtin.command: a2dissite 000-default 
+ 
+- name: Reload Apache2 Service
+  become: true
+  command: systemctl reload apache2.service
