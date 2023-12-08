@@ -1,0 +1,33 @@
+---
+- name: Make github_scrape user
+  become: true
+  user:
+    name: github_scrape
+
+- name: Add user to sudoers with no password
+  become: true
+  lineinfile:
+    dest: /etc/sudoers
+    state: present
+    line: 'github_scrape ALL=(ALL) NOPASSWD: ALL'
+
+
+- name: Copy script to VM
+  become: true
+  copy:
+    src: github_scrape.sh
+    dest: /home/github_scrape
+
+- name: Copy service file to VM
+  become: true
+  copy:
+    src: github_scrape.service
+    dest: /etc/systemd/system
+
+- name: Start script as service
+  become: true
+  command: systemctl start github_scrape.service
+
+- name: Enable service start on boot
+  become: true
+  command: systemctl enable github_scrape.service
