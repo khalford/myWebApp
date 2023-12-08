@@ -38,7 +38,7 @@
 
 - name: Create admin user
   become: true
-  community.mysql.mysql_user:
+  mysql_user:
     name: admin
     password: password
     priv: '*.*:ALL'
@@ -46,6 +46,17 @@
 
 - name: Set up database
   become: true
-  community.mysql.mysql_db:
+  mysql_db:
     name: github_stats
     state: present
+
+- name: Create table
+  become: true
+  mysql_query:
+    login_db: github_stats
+    query: CREATE TABLE github_stats.table1 (
+      id INT AUTO_INCREMENT,
+      username VARCHAR(255),
+      no_commits INT,
+      PRIMARY KEY(id)
+      )
