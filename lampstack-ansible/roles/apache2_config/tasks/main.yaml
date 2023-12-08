@@ -1,10 +1,17 @@
 ---
+- name: Install Apache2
+  become: true
+  ansible.builtin.apt:
+    name: apache2
+    state: latest
+    update_cache: true
+
 - name: Copy Virtual Host file
   become: true
   ansible.builtin.copy:
     src: webserver.conf
     dest: /etc/apache2/sites-available
-   
+  
 - name: Enable new site
   become: true
   ansible.builtin.command: a2ensite webserver
@@ -12,7 +19,28 @@
 - name: Disable default site
   become: true
   ansible.builtin.command: a2dissite 000-default 
- 
+
+- name: Create /var/repos
+  become: true
+  ansible.builtin.file:
+    path: /var/repos
+    state: directory
+
+- name: Clone the MyWebProject Repo
+  become: true
+  ansible.builtin.git:
+    repo: https://github.com/khalford/MyWebProject.git
+    dest: /var/repos/MyWebProject
+    single_branch: yes
+    version: main
+
+- name: Copy git files to site
+  become: true
+  ansible.builtin.copy:
+    src: /var/repos/MyWebProject/
+    dest: /var/www
+    remote_src: true
+
 - name: Reload Apache2 Service
   become: true
   command: systemctl reload apache2.service

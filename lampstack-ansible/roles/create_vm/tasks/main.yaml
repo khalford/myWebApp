@@ -1,8 +1,8 @@
 ---
 - name: Install openstack
   pip:
-   name: openstacksdk>=0.36,<=0.98.999
-   state: present
+    name: openstacksdk>=0.36,<=0.98.999
+    state: present
 
 - name: Boot VM
   os_server:

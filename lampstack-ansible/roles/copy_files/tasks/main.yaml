@@ -1,6 +1,0 @@
-- name: Copy git files to site
-  become: true
-  ansible.builtin.copy:
-    src: /var/repos/MyWebProject/
-    dest: /var/www
-    remote_src: true
