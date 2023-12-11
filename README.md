@@ -11,8 +11,7 @@ For [lampstack-ansible](lampstack-ansible):<br>
 
 Default database is called **github_stats** and the default table is **table1** which looks like below:<br>
 
-| Field      | Type         | Null | Key | Default | Extra          |
-|------------|--------------|------|-----|---------|----------------|
-| id         | int          | NO   | PRI | NULL    | auto_increment |
-| username   | varchar(255) | YES  |     | NULL    |                |
-| no_commits | int          | YES  |     | NULL    |                |
+| Field      | Type         | Null | Key | Default |
+|------------|--------------|------|-----|---------|
+| username   | varchar(255) | YES  | UNI | NULL    |
+| no_commits | int(11)      | YES  |     | NULL    |
