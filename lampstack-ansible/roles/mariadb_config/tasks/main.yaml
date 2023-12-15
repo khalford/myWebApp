@@ -59,3 +59,23 @@
       no_commits INT,
       UNIQUE (username)
       )
+
+- name: Copy script to VM
+  become: true
+  copy:
+    src: update_db.sh
+    dest: /home/github_scrape
+
+- name: Copy service file to VM
+  become: true
+  copy:
+    src: update_db.service
+    dest: /etc/systemd/system
+
+- name: Start script as service
+  become: true
+  command: systemctl start update_db.service
+
+- name: Enable service start on boot
+  become: true
+  command: systemctl enable update_db.service

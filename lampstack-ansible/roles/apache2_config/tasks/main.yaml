@@ -1,8 +1,12 @@
 ---
-- name: Install Apache2
+- name: Install Apache2 and PHP and packages
   become: true
   ansible.builtin.apt:
-    name: apache2
+    name:
+      - apache2
+      - php
+      - libapache2-mod-php
+      - php-mysql
     state: latest
     update_cache: true
 
@@ -11,6 +15,14 @@
   ansible.builtin.copy:
     src: webserver.conf
     dest: /etc/apache2/sites-available
+
+- name: Prioritise index.php over index.html
+  become: true
+  lineinfile:
+      path: /etc/apache2/mods-enabled/dir.conf
+      regexp: '^(.*)DirectoryIndex index.html index.cgi index.pl index.php index.xhtml index.htm(.*)$'
+      line: 'DirectoryIndex index.php index.html index.cgi index.pl index.xhtml index.htm'
+      backrefs: yes
   
 - name: Enable new site
   become: true
@@ -44,3 +56,9 @@
 - name: Reload Apache2 Service
   become: true
   command: systemctl reload apache2.service
+
+- name: Copy index.php to site
+  become: true
+  copy:
+    src: index.php
+    dest: /var/www/MyWebProject

@@ -8,5 +8,5 @@
   hosts: all
   roles:
   - apache2_config 
-  - mariadb_config
   - github_scraper_config
+  - mariadb_config
