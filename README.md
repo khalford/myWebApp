@@ -23,7 +23,7 @@ Default database is called **github_stats** and the default table is **table1** 
   - It runs a GitHub Rest Api get request every 30 seconds that will get the contributor data from the SCD-Openstack-Utils Repo<br>
   - That data is stored in */home/github_scrape/SCD_Openstack_Utils_commits*<br>
   - A GitHub Api Token is required for the script to run due to rate limiting.<br>
-  - You can enter your token in the **curl** in this [file](lampstack-anisble/roles/github_scrape/files/github_scrape.sh)<br>
+  - You can enter your token in the **curl** in this [file](lampstack-ansible/roles/github_scrape_config/files/github_scrape.sh)<br>
 
 - **update_db**:<br>
   - This service's script is also stored in */home/github_scrape/update_db.sh*<br>
