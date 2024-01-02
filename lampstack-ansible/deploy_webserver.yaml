@@ -1,12 +1,14 @@
 ---
-- name: Create VM
-  hosts: localhost
-  roles:
-  - create_vm
+- hosts: all
+  gather_facts: false
+  tasks:
+    - name: Wait 60 seconds for target connection to become reachable/usable
+      ansible.builtin.wait_for_connection:
+        timeout: 60
 
 - name: Deploy Webserver
   hosts: all
   roles:
   - apache2_config 
-  - github_scraper_config
+  - github_scrape_config
   - mariadb_config

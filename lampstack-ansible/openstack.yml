@@ -1,0 +1,16 @@
+plugin: openstack.cloud.openstack
+
+all_projects: false
+expand_hostvars: false
+fail_on_errors: true
+only_clouds:
+  - "openstack"
+strict: true
+private: true
+compose:
+  ansible_user: "'ubuntu'"
+
+groups:
+  web_servers: | 
+    'web-vm-' in openstack.name
+     and 'group' in openstack.metadata and 'web-vm' in openstack.metadata['group']
