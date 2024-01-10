@@ -1,0 +1,34 @@
+---
+- name: Install openstack
+  pip:
+    name: openstacksdk>=0.36,<=0.98.999
+    state: present
+
+- name: Boot VM
+  os_server:
+    name: "web-vm"
+    image: "ubuntu-focal-20.04-nogui"
+    key_name: "ansible-instance-pubkey"
+    flavor: l3.nano
+    cloud: openstack
+    network: Internal
+    security_groups: [default, HTTP]
+    auto_ip: no
+    state: present
+  register: vm_info
+
+- name: Extract VM ip address
+  debug:
+    msg: "{{ vm_info.openstack.addresses.Internal[0].addr }}"
+
+- name: Wait for connection
+  wait_for_connection:
+    timeout: 300
+  delegate_to: "{{ vm_info.openstack.addresses.Internal[0].addr }}"
+
+- name: Add vm to hosts
+  ansible.builtin.add_host:
+    hostname: "{{ vm_info.openstack.addresses.Internal[0].addr }}"
+
+
+
