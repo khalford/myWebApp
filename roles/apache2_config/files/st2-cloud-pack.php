@@ -8,7 +8,7 @@
     </head>
     <body>
         <div class="container p-3">
-            <p><a href="SCD-Openstack-Utils.php">SCD-Openstack-Utils</a></p>
+            <p><a class="link-offset-2 link-underline link-underline-opacity-0" href="SCD-Openstack-Utils.php">SCD-Openstack-Utils</a></p>
         </div>
         <div class="container p-5">
             <?php

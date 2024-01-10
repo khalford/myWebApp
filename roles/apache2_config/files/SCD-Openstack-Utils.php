@@ -7,6 +7,9 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     </head>
     <body>
+        <div class="container p-3">
+            <p><a class="link-offset-2 link-underline link-underline-opacity-0" href="st2-cloud-pack.php">st2-cloud-pack</a></p>
+        </div>
         <div class="container p-5">
             <?php
             try {
