@@ -13,4 +13,4 @@ compose:
 groups:
   web_servers: | 
     'web-vm-' in openstack.name
-     and 'group' in openstack.metadata and 'web-vm' in openstack.metadata['group']
+     and 'group' in openstack.metadata and 'web-vms' in openstack.metadata['group']
