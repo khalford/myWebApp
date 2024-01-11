@@ -1,9 +1,11 @@
 #!/bin/bash
 
+TOKEN="<YOUR_TOKEN>"
+
 while true
 do
   # Get data
-  curl -L -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" -H "Authorization: <YOUR_TOKEN> "https://api.github.com/repos/stfc/SCD-Openstack-Utils/contributors?per_page-100" | grep 'contributions\|login\|html_url\|avatar_url' | paste -d "" - - - - > /home/github_scrape/SCD_Openstack_Utils_commits
+  curl -L -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" -H "Authorization: $TOKEN" "https://api.github.com/repos/stfc/SCD-Openstack-Utils/contributors?per_page-100" | grep 'contributions\|login\|html_url\|avatar_url' | paste -d "" - - - - > /home/github_scrape/SCD_Openstack_Utils_commits
 
   # Format data
   sed -i 's/"//g' /home/github_scrape/SCD_Openstack_Utils_commits
@@ -15,7 +17,7 @@ do
   sed -i 's/,/, /g' /home/github_scrape/SCD_Openstack_Utils_commits
 
   # Get data
-  curl -L -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" -H "Authorization: <YOUR_TOKEN> "https://api.github.com/repos/stfc/st2-cloud-pack/contributors?per_page-100" | grep 'contributions\|login\|html_url\|avatar_url' | paste -d "" - - - - > /home/github_scrape/st2_cloud_pack_commits
+  curl -L -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" -H "Authorization: $TOKEN" "https://api.github.com/repos/stfc/st2-cloud-pack/contributors?per_page-100" | grep 'contributions\|login\|html_url\|avatar_url' | paste -d "" - - - - > /home/github_scrape/st2_cloud_pack_commits
 
   # Format data
   sed -i 's/"//g' /home/github_scrape/st2_cloud_pack_commits
