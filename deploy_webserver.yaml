@@ -2,9 +2,9 @@
 - hosts: all
   gather_facts: false
   tasks:
-    - name: Wait 60 seconds for target connection to become reachable/usable
+    - name: Wait 120 seconds for target connection to become reachable/usable. Allows time for network to set up
       ansible.builtin.wait_for_connection:
-        timeout: 60
+        timeout: 120
 
 - name: Deploy Webserver
   hosts: all
