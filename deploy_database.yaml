@@ -6,10 +6,8 @@
       ansible.builtin.wait_for_connection:
         timeout: 120
 
-vars_files:
-- ./terraform_lb_floating_ip.yaml
-
 - name: Deploy Webserver
   hosts: all
   roles:
-  - apache2_config
+  - github_scrape_config
+  - mariadb_config

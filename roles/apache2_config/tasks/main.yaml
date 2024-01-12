@@ -38,7 +38,7 @@
     path: /var/www/myWeb
     state: directory
 
-- name: Copy index.html to site
+- name: Copy web pages to site
   become: true
   copy:
     src: '{{item}}'
@@ -51,3 +51,10 @@
 - name: Reload Apache2 Service
   become: true
   command: systemctl reload apache2.service
+
+- name: Replace PHP local host with fip
+  become: true
+  replace:
+    path: /var/ww/myWeb/SCD-Openstack-Utils.php
+    regexp: '^(.*)localhost(.*)$'
+    line: '${{ lb_fip }}'
