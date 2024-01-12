@@ -21,6 +21,7 @@ locals {
   db_count_set = toset([for v in range(local.db_count) : tostring(v)])
   lb_float_ip = ""
   external_network_id = ""
+  ssh_key_name = ""
 }
 
 # Note: Ansible is configured to run on Ubuntu 20. Changing the image may affect Ansible configuration
@@ -57,6 +58,38 @@ resource "openstack_networking_router_interface_v2" "router_interface_1" {
   subnet_id = openstack_networking_subnet_v2.subnet_1.id
 }
 
+# Create security groups
+
+resource "openstack_networking_secgroup_v2" "http_secgroup" {
+  name        = "web-HTTP"
+  delete_default_rules = true
+}
+
+resource "openstack_networking_secgroup_rule_v2" "http_secgroup_rule" {
+  direction         = "ingress"
+  ethertype         = "IPv4"
+  security_group_id = openstack_networking_secgroup_v2.http_secgroup.id
+  protocol = "tcp"
+  port_range_min = 80
+  port_range_max = 80
+  remote_ip_prefix  = "0.0.0.0/0"
+}
+
+resource "openstack_networking_secgroup_v2" "db_secgroup" {
+  name        = "SQLDB"
+  delete_default_rules = true
+}
+
+resource "openstack_networking_secgroup_rule_v2" "db_secgroup_rule" {
+  direction         = "ingress"
+  ethertype         = "IPv4"
+  security_group_id = openstack_networking_secgroup_v2.db_secgroup.id
+  protocol = "tcp"
+  port_range_min = 3306
+  port_range_max = 3306
+  remote_group_id = openstack_networking_secgroup_rule_v2.http_secgroup_rule.id
+}
+
 # Web serving VM provisioning
 
 resource "openstack_compute_instance_v2" "web_vm" {
@@ -64,8 +97,9 @@ resource "openstack_compute_instance_v2" "web_vm" {
         name  = "web-vm-${count.index}"
         image_id        = data.openstack_images_image_v2.ubuntu-2004-nogui.id
         flavor_id       = data.openstack_compute_flavor_v2.vm_flavor.flavor_id
-        security_groups = ["default", "HTTP"]
-        key_pair        = "ansible-instance-pubkey"
+        security_groups = ["default", "web-HTTP"]
+        key_pair        = local.ssh_key_name
+        depends_on = [ openstack_networking_router_interface_v2.router_interface_1 ]
     
     network {
         name = openstack_networking_network_v2.network_1.name
@@ -85,7 +119,7 @@ resource "openstack_compute_instance_v2" "db_vm" {
         image_id        = data.openstack_images_image_v2.ubuntu-2004-nogui.id
         flavor_id       = data.openstack_compute_flavor_v2.vm_flavor.flavor_id
         security_groups = ["default", "SQLDB"]
-        key_pair        = "ansible-instance-pubkey"
+        key_pair        = local.ssh_key_name
     
     network {
         name = openstack_networking_network_v2.network_1.name
@@ -195,7 +229,7 @@ resource "null_resource" "ansible_web_config" {
   for_each = local.web_count_set
   depends_on = [openstack_networking_floatingip_associate_v2.lb_fip, openstack_compute_instance_v2.web_vm]
   provisioner "local-exec" {
-    command = "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -e 'ansible_port=${openstack_lb_listener_v2.web_ssh_listener[each.key].protocol_port}, lb_fip=${local.lb_float_ip}' -i ${local.lb_float_ip},  deploy_webserver.yaml"
+    command = "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -e 'ansible_port=${openstack_lb_listener_v2.web_ssh_listener[each.key].protocol_port} lb_fip=${local.lb_float_ip}' -i ${local.lb_float_ip},  deploy_webserver.yaml"
   }
 }
 
