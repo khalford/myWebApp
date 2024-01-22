@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/python3
 
 # Loop through all lines in commit file and update sql table
 while true; do

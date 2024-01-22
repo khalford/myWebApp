@@ -55,6 +55,13 @@
 - name: Replace PHP local host with fip
   become: true
   replace:
-    path: /var/ww/myWeb/SCD-Openstack-Utils.php
-    regexp: '^(.*)localhost(.*)$'
-    line: '${{ lb_fip }}'
+    path: /var/www/myWeb/SCD-Openstack-Utils.php
+    regexp: 'localhost'
+    replace: '{{ db_ip }}'
+
+- name: Replace PHP local host with fip
+  become: true
+  replace:
+    path: /var/www/myWeb/st2-cloud-pack.php
+    regexp: 'localhost'
+    replace: '{{ db_ip }}'

@@ -1,4 +1,12 @@
 ---
+- name: Add MariaDB repo
+  become: true
+  shell: curl -LsS https://r.mariadb.com/downloads/mariadb_repo_setup | sudo bash -s -- --mariadb-server-version="mariadb-10.11"
+
+- name: Update apt
+  become: true
+  command: apt update
+
 - name: Install pip
   become: true
   ansible.builtin.apt: 
@@ -15,7 +23,6 @@
   become: true
   ansible.builtin.apt:
     name: mariadb-server
-    state: latest
     update_cache: true
 
 - name: Save root password in .my.cnf
@@ -40,8 +47,9 @@
   become: true
   mysql_user:
     name: admin
-    password: password
-    priv: '*.*:ALL'
+    password: "{{ lookup('ansible.builtin.password', '/tmp/passwordfile', chars=['ascii_letters']) }}"
+    priv: 'github_stats.*:ALL'
+    host: '192.168.100.%'
     state: present    
 
 - name: Set up database
@@ -93,3 +101,59 @@
 - name: Enable service start on boot
   become: true
   command: systemctl enable update_db.service
+
+- name: Create private key
+  community.crypto.openssl_privatekey:
+    path: /etc/mysql/ca.key
+
+- name: Create certificate signing request (CSR) for CA certificate
+  community.crypto.openssl_csr_pipe:
+    privatekey_path: /etc/mysql/ca.key
+    common_name: "{{ test_db }}"
+    use_common_name_for_san: false
+    basic_constraints:
+      - 'CA:TRUE'
+    basic_constraints_critical: true
+    key_usage:
+      - keyCertSign
+    key_usage_critical: true
+  register: ca_csr
+
+- name: Create self-signed CA certificate from CSR
+  community.crypto.x509_certificate:
+    path: /etc/mysql/ca.crt
+    csr_content: "{{ ca_csr.csr }}"
+    privatekey_path: /etc/mysql/ca.key
+    provider: selfsigned
+
+- name: Enable remote config
+  become: true
+  replace:
+    path: /etc/mysql/mariadb.conf.d/50-server.cnf
+    regexp: "bind-address=127.0.0.1"
+    replace: "bind-address=192.168.100.*"
+
+- name: Enable ssl config
+  become: true
+  replace:
+    path: /etc/mysql/mariadb.conf.d/50-server.cnf
+    regexp: "#ssl-cert = /etc/mysql/server-cert.pem"
+    replace: "ssl-cert = /etc/mysql/ca.crt"
+
+- name: Enable ssl config
+  become: true
+  replace:
+    path: /etc/mysql/mariadb.conf.d/50-server.cnf
+    regexp: "#ssl-key = /etc/mysql/server-key.pem"
+    replace: "ssl-key = /etc/mysql/ca.key"
+
+- name: Enable ssl config
+  become: true
+  replace:
+    path: /etc/mysql/mariadb.conf.d/50-server.cnf
+    regexp: "#ssl-ca = /etc/mysql/cacert.pem"
+    replace: "ssl-ca = /etc/mysql/ca.crt"
+
+- name: Restart Mariadb service for network changes
+  become: true
+  command: systemctl restart mariadb

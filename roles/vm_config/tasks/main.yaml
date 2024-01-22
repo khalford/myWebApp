@@ -1,0 +1,7 @@
+- name: Update packages
+  become: true
+  command: apt update
+
+- name: Upgrade packages
+  become: true
+  command: apt upgrade -y 
