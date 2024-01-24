@@ -1,0 +1,46 @@
+---
+- hosts: all
+  gather_facts: false
+  tasks:
+    - name: Wait 60 seconds for target connection to become reachable/usable
+      ansible.builtin.wait_for_connection:
+        timeout: 60
+
+    - name: Copy Ansible files to Bastion Host
+      copy:
+        src: ./bastion_ansible_setup
+        dest: ~/
+
+    - name: Install Pip in the Bastion Host
+      become: true
+      apt:
+        name: python3-pip
+
+    - name: Install Ansible on the Bastion Host
+      pip:
+        name: ansible 
+    - name: Install openstacksdk on the Bastion Host
+      pip:
+        name: openstacksdk>=0.36,<=0.98.999
+
+    - name: Ensure ~/.config/openstack exists
+      file:
+        path: ~/.config/openstack
+        state: directory
+
+    - name: copy clouds.yaml to Bastion
+      copy:
+        src: ~/.config/openstack/clouds.yaml
+        dest: ~/.config/openstack/clouds.yaml
+
+
+    - name: Tell user next steps
+      ansible.builtin.debug:
+        msg: "Please SSH onto the Bastion VM at {{ lb_fip }} Port: 2222 You can use: ssh {{ fed_id }}@{{ lb_fip }} -p 2222"
+
+- hosts: localhost
+  tasks:
+    - name: Delete Bastion private key from localhost
+      file:
+        path: ./bastion_key
+        state: absent

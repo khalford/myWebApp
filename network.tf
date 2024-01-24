@@ -103,49 +103,24 @@ resource "openstack_lb_member_v2" "http_member" {
   protocol_port = 80
 }
 
-resource "openstack_lb_listener_v2" "web_ssh_listener" {
-  count = length(openstack_compute_instance_v2.web_vm)
-  name = "${openstack_compute_instance_v2.web_vm[count.index].name}-ssh"
+resource "openstack_lb_listener_v2" "ssh_listener" {
+  name = "bastion-ssh"
   protocol        = "TCP"
-  protocol_port   = 1000 + tonumber(split(".", openstack_compute_instance_v2.web_vm[count.index].access_ip_v4)[3])
+  protocol_port   = 2222
   loadbalancer_id = openstack_lb_loadbalancer_v2.webapp_loadbalancer.id
   timeout_client_data = 600000
   timeout_member_connect = 600000
   timeout_member_data = 600000
 }
 
-resource "openstack_lb_pool_v2" "web_ssh_pool" {
-  count = length(openstack_lb_listener_v2.web_ssh_listener)
+resource "openstack_lb_pool_v2" "ssh_pool" {
   protocol    = "TCP"
   lb_method   = "SOURCE_IP"
-  listener_id = openstack_lb_listener_v2.web_ssh_listener[count.index].id
+  listener_id = openstack_lb_listener_v2.ssh_listener.id
 }
 
-resource "openstack_lb_member_v2" "web_ssh_member" {
-  count = length(openstack_compute_instance_v2.web_vm)
-  pool_id       = openstack_lb_pool_v2.web_ssh_pool[count.index].id
-  address       = openstack_compute_instance_v2.web_vm[count.index].access_ip_v4
-  protocol_port = 22
-}
-
-resource "openstack_lb_listener_v2" "db_ssh_listener" {
-  name = "db-vm-ssh"
-  protocol        = "TCP"
-  protocol_port   = 1000 + tonumber(split(".", openstack_compute_instance_v2.db_vm.access_ip_v4)[3])
-  loadbalancer_id = "${openstack_lb_loadbalancer_v2.webapp_loadbalancer.id}"
-  timeout_client_data = 600000
-  timeout_member_connect = 600000
-  timeout_member_data = 600000
-}
-
-resource "openstack_lb_pool_v2" "db_ssh_pool" {
-  protocol    = "TCP"
-  lb_method   = "SOURCE_IP"
-  listener_id = "${openstack_lb_listener_v2.db_ssh_listener.id}"
-}
-
-resource "openstack_lb_member_v2" "db_ssh_member" {
-  pool_id       = "${openstack_lb_pool_v2.db_ssh_pool.id}"
-  address       = "${openstack_compute_instance_v2.db_vm.access_ip_v4}"
+resource "openstack_lb_member_v2" "ssh_member" {
+  pool_id       = openstack_lb_pool_v2.ssh_pool.id
+  address       = openstack_compute_instance_v2.bastion_vm.access_ip_v4
   protocol_port = 22
 }

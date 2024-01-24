@@ -5,4 +5,5 @@ ssh_public_key_name = ""
 subnet_cidr = ""
 vm_image_id = ""
 vm_flavor_id = ""
+fed_id = ""
 

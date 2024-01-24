@@ -32,3 +32,8 @@ variable "vm_flavor_id" {
     description = "The UUID of the flavor to build the VM on. Can be found with 'openstack flavor list'.\n  The default flavor is 'l3.nano'."
     type = string
 }
+
+variable "fed_id" {
+  description = "Your Fed ID used in the clouds.yaml."
+  type = string
+}

@@ -57,11 +57,11 @@
   replace:
     path: /var/www/myWeb/SCD-Openstack-Utils.php
     regexp: 'localhost'
-    replace: '{{ db_ip }}'
+    replace: "{{ host_vars[groups['db_servers'][0]].ansible_host }}"
 
 - name: Replace PHP local host with fip
   become: true
   replace:
     path: /var/www/myWeb/st2-cloud-pack.php
     regexp: 'localhost'
-    replace: '{{ db_ip }}'
+    replace: "{{ host_vars[groups['db_servers'][0]].ansible_host }}"

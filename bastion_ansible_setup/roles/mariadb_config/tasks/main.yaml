@@ -82,34 +82,16 @@
       UNIQUE (username)
       )
 
-- name: Copy script to VM
+- name: Create server private key
   become: true
-  copy:
-    src: update_db.sh
-    dest: /home/github_scrape
-
-- name: Copy service file to VM
-  become: true
-  copy:
-    src: update_db.service
-    dest: /etc/systemd/system
-
-- name: Start script as service
-  become: true
-  command: systemctl start update_db.service
-
-- name: Enable service start on boot
-  become: true
-  command: systemctl enable update_db.service
-
-- name: Create private key
   community.crypto.openssl_privatekey:
     path: /etc/mysql/ca.key
 
-- name: Create certificate signing request (CSR) for CA certificate
+- name: Create server certificate signing request (CSR) for CA certificate
+  become: true
   community.crypto.openssl_csr_pipe:
     privatekey_path: /etc/mysql/ca.key
-    common_name: "{{ test_db }}"
+    common_name: "lamp-db"
     use_common_name_for_san: false
     basic_constraints:
       - 'CA:TRUE'
@@ -119,12 +101,29 @@
     key_usage_critical: true
   register: ca_csr
 
-- name: Create self-signed CA certificate from CSR
+- name: Create server self-signed CA certificate from CSR
+  become: true
   community.crypto.x509_certificate:
     path: /etc/mysql/ca.crt
     csr_content: "{{ ca_csr.csr }}"
     privatekey_path: /etc/mysql/ca.key
     provider: selfsigned
+
+- name: Change file ownership, group and permissions
+  become: true
+  ansible.builtin.file:
+    path: /etc/mysql/ca.crt
+    owner: mysql
+    group: mysql
+    mode: '0644'
+
+- name: Change file ownership, group and permissions
+  become: true
+  ansible.builtin.file:
+    path: /etc/mysql/ca.key
+    owner: mysql
+    group: mysql
+    mode: '0644'
 
 - name: Enable remote config
   become: true
