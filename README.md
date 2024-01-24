@@ -19,7 +19,7 @@ The scripts will:
   1. Now you need to activate the virtual environment created by the setup script: `{source ansible-venv/bin/activate}`
   1. Edit the variables in **vars.tfvars**. All of these variables are mandatory. There is a description of each variables in variables.tf if you don't know what they are.
   1. Now you need to initialise the directory with Terraform: `{terraform init}`
-  1. Next to plan the Terraform provisioning. Here we use the flag *-var-file=* to specify our input variables and *-out=plan* to save the plan to a file: `{terraform plan -out plan -var-file=./vars.tfvars}`
+  1. Next to plan the Terraform provisioning. Here we use the flag **-var-file=** to specify our input variables and **-out=plan** to save the plan to a file: `{terraform plan -out plan -var-file=./vars.tfvars}`
   1. Finally, apply the plan: `{terraform apply plan}`
   
 ### Setup Ansible Configuration
