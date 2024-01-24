@@ -1,0 +1,158 @@
+---
+- name: Add MariaDB repo
+  become: true
+  shell: curl -LsS https://r.mariadb.com/downloads/mariadb_repo_setup | sudo bash -s -- --mariadb-server-version="mariadb-10.11"
+
+- name: Update apt
+  become: true
+  command: apt update
+
+- name: Install pip
+  become: true
+  ansible.builtin.apt: 
+    name: python3-pip
+    state: latest
+
+- name: Install PyMySQL
+  become: true
+  pip:
+    name: PyMySQL
+    state: latest
+
+- name: Install Mariadb
+  become: true
+  ansible.builtin.apt:
+    name: mariadb-server
+    update_cache: true
+
+- name: Save root password in .my.cnf
+  become: true
+  template:
+    src: root_cnf.cnf
+    dest: /root/.my.cnf
+    owner: root
+    mode: '0600'
+
+- name: Set password for root user
+  become: true
+  mysql_user:
+    name: "root"
+    password: "root"
+    priv: '*.*:ALL,GRANT'
+    host: 'localhost'
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+    state: present
+
+- name: Create admin user
+  become: true
+  mysql_user:
+    name: admin
+    password: "{{ lookup('ansible.builtin.password', '/tmp/passwordfile', chars=['ascii_letters']) }}"
+    priv: 'github_stats.*:ALL'
+    host: '192.168.100.%'
+    state: present    
+
+- name: Set up database
+  become: true
+  mysql_db:
+    name: github_stats
+    state: present
+
+- name: Create table
+  become: true
+  mysql_query:
+    login_db: github_stats
+    query: CREATE TABLE github_stats.scd_table (
+      username VARCHAR(255),
+      no_commits INT,
+      avatar_url VARCHAR(255),
+      html_url VARCHAR(255),
+      UNIQUE (username)
+      )
+
+- name: Create table
+  become: true
+  mysql_query:
+    login_db: github_stats
+    query: CREATE TABLE github_stats.st2_table (
+      username VARCHAR(255),
+      no_commits INT,
+      avatar_url VARCHAR(255),
+      html_url VARCHAR(255),
+      UNIQUE (username)
+      )
+
+- name: Create server private key
+  become: true
+  community.crypto.openssl_privatekey:
+    path: /etc/mysql/ca.key
+
+- name: Create server certificate signing request (CSR) for CA certificate
+  become: true
+  community.crypto.openssl_csr_pipe:
+    privatekey_path: /etc/mysql/ca.key
+    common_name: "lamp-db"
+    use_common_name_for_san: false
+    basic_constraints:
+      - 'CA:TRUE'
+    basic_constraints_critical: true
+    key_usage:
+      - keyCertSign
+    key_usage_critical: true
+  register: ca_csr
+
+- name: Create server self-signed CA certificate from CSR
+  become: true
+  community.crypto.x509_certificate:
+    path: /etc/mysql/ca.crt
+    csr_content: "{{ ca_csr.csr }}"
+    privatekey_path: /etc/mysql/ca.key
+    provider: selfsigned
+
+- name: Change file ownership, group and permissions
+  become: true
+  ansible.builtin.file:
+    path: /etc/mysql/ca.crt
+    owner: mysql
+    group: mysql
+    mode: '0644'
+
+- name: Change file ownership, group and permissions
+  become: true
+  ansible.builtin.file:
+    path: /etc/mysql/ca.key
+    owner: mysql
+    group: mysql
+    mode: '0644'
+
+- name: Enable remote config
+  become: true
+  replace:
+    path: /etc/mysql/mariadb.conf.d/50-server.cnf
+    regexp: "bind-address=127.0.0.1"
+    replace: "bind-address=192.168.100.*"
+
+- name: Enable ssl config
+  become: true
+  replace:
+    path: /etc/mysql/mariadb.conf.d/50-server.cnf
+    regexp: "#ssl-cert = /etc/mysql/server-cert.pem"
+    replace: "ssl-cert = /etc/mysql/ca.crt"
+
+- name: Enable ssl config
+  become: true
+  replace:
+    path: /etc/mysql/mariadb.conf.d/50-server.cnf
+    regexp: "#ssl-key = /etc/mysql/server-key.pem"
+    replace: "ssl-key = /etc/mysql/ca.key"
+
+- name: Enable ssl config
+  become: true
+  replace:
+    path: /etc/mysql/mariadb.conf.d/50-server.cnf
+    regexp: "#ssl-ca = /etc/mysql/cacert.pem"
+    replace: "ssl-ca = /etc/mysql/ca.crt"
+
+- name: Restart Mariadb service for network changes
+  become: true
+  command: systemctl restart mariadb

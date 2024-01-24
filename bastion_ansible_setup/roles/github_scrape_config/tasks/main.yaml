@@ -11,18 +11,35 @@
     state: present
     line: 'github_scrape ALL=(ALL) NOPASSWD: ALL'
 
+- name: Install pip
+  become: true
+  ansible.builtin.apt: 
+    name: python3-pip
+    state: latest
+
+- name: Install pip packages
+  become: true
+  pip:
+    name: requests
+    state: latest
+
+- name: Install pip packages
+  become: true
+  pip:
+    name: mysql-connector-python
+    state: latest
 
 - name: Copy script to VM
   become: true
   copy:
-    src: github_scrape.sh
-    dest: /home/github_scrape
+    src: github_scrape.py
+    dest: /home/github_scrape/github_scrape.py
 
 - name: Copy service file to VM
   become: true
   copy:
     src: github_scrape.service
-    dest: /etc/systemd/system
+    dest: /etc/systemd/system/github_scrape.service
 
 - name: Start script as service
   become: true

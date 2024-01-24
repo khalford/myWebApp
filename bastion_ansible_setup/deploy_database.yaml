@@ -1,0 +1,7 @@
+---
+- name: Deploy database
+  hosts: db_servers
+  roles:
+  - vm_config
+  - mariadb_config
+  - github_scrape_config

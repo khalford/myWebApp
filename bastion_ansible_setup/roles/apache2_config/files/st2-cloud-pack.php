@@ -7,13 +7,16 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     </head>
     <body>
+        <div class="container p-3">
+            <p><a class="link-offset-2 link-underline link-underline-opacity-0" href="SCD-Openstack-Utils.php">SCD-Openstack-Utils</a></p>
+        </div>
         <div class="container p-5">
             <?php
             try {
                 $db = new PDO("mysql:host=localhost;dbname=github_stats", root, "root");
-                echo "<h2>Most Commits SCD-Openstack-Utils</h2><ol>";
-                foreach($db->query("SELECT username,no_commits FROM table1") as $row) {
-                        echo "<li>".$row['username']."'s ".'commits: '.$row['no_commits']."</li>";
+                echo "<h2>Most Commits st2-cloud-pack</h2><ol>";
+                foreach($db->query("SELECT username, avatar_url, html_url, no_commits FROM st2_table") as $row) {
+                        echo "<li><img height='15' width='15' src=".$row['avatar_url']."/><a class='link-offset-2 link-underline link-underline-opacity-0' href=".$row['html_url'].">".$row['username']."'s </a>".'commits: '.$row['no_commits']."</li>";
                 }
                 echo "</ol>";
                 } catch (PDOException $e) {

@@ -1,0 +1,20 @@
+plugin: openstack.cloud.openstack
+
+all_projects: false
+expand_hostvars: false
+fail_on_errors: true
+only_clouds:
+  - "openstack"
+strict: true
+private: true
+compose:
+  ansible_user: "{{ fed_id }}"
+
+groups:
+  web_servers: | 
+    'web-vm-' in openstack.name
+     and 'group' in openstack.metadata and 'web_vms' in openstack.metadata['group']
+  db_servers: | 
+    'db-vm' in openstack.name
+     and 'group' in openstack.metadata and 'db_vms' in openstack.metadata['group']
+
