@@ -31,5 +31,5 @@ The scripts will:
 Now you have the infrastructure setup, you need to run Ansible to configure all of the VMs. To do this we ssh into our Bastion Host and run Ansible from there.
   1. SSH into the Bastion Host through the Load Balancer. In the previous setup you would have seen a debug statement in the console. This tells you what the user and ip you have specified is: `ssh <fed_id>@<floating_ip> -p 2222`
   1. From the home directoy: `cd bastion_ansible_setup`
-  1. This VM should already be setup with all requirements. Just run the Ansible Playbook: `ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -e "fed_id=<fed_id>" -i inventory-openstack.yaml play.yaml`<br>
+  1. This VM should already be setup with all requirements. Just run the Ansible Playbook: `ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -e "fed_id=$USER" -i inventory-openstack.yaml play.yaml`<br>
 Provided no errors occured, go to the floating ip in your browser and you should see the webpage!
