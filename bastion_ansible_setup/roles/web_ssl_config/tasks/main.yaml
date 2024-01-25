@@ -6,14 +6,14 @@
 - name: Copy CA cert from bastion to web
   become: true
   copy:
-    src: /tmp/ca.crt
-    dest: /home/{{ fed_id }}/
+    src: /tmp/db-vm/etc/mysql/ca.crt
+    dest: /home/{{ fed_id }}/ca.crt
 
 - name: Copy CA key from bastion to web
   become: true
   copy:
-    src: /tmp/ca.key
-    dest: /tmp/
+    src: /tmp/db-vm/etc/mysql/ca.key
+    dest: /tmp/ca.key
 
 - name: Create client certificate signing request (CSR) for CA certificate
   become: true
