@@ -1,4 +1,9 @@
 ---      
+- name: Copy Cert
+  hosts: localhost
+  roles:
+   - copy_ca
+
 - name: Deploy Webserver
   hosts: web_servers
   roles:

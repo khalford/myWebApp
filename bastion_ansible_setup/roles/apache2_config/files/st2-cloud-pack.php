@@ -13,7 +13,12 @@
         <div class="container p-5">
             <?php
             try {
-                $db = new PDO("mysql:host=localhost;dbname=github_stats", root, "root");
+                $db = new PDO('mysql:host=ip;dbname=github_stats', 'admin', array(
+                    PDO::MYSQL_ATTR_SSL_KEY    =>'/home/oxg98278/client.key',
+                    PDO::MYSQL_ATTR_SSL_CERT=>'/home/oxg98278/client.crt',
+                    PDO::MYSQL_ATTR_SSL_CA    =>'/home/oxg98278/ca.crt'
+                    )
+                );
                 echo "<h2>Most Commits st2-cloud-pack</h2><ol>";
                 foreach($db->query("SELECT username, avatar_url, html_url, no_commits FROM st2_table") as $row) {
                         echo "<li><img height='15' width='15' src=".$row['avatar_url']."/><a class='link-offset-2 link-underline link-underline-opacity-0' href=".$row['html_url'].">".$row['username']."'s </a>".'commits: '.$row['no_commits']."</li>";

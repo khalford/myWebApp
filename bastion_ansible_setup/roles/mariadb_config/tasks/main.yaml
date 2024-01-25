@@ -109,6 +109,19 @@
     privatekey_path: /etc/mysql/ca.key
     provider: selfsigned
 
+- name: Copy CA cert to bastion
+  become: true
+  fetch: 
+    src: /etc/mysql/ca.crt
+    dest: /tmp/ca.crt
+
+- name: Copy CA key to bastion
+  become: true
+  fetch: 
+    src: /etc/mysql/ca.key
+    dest: /tmp/ca.key
+
+
 - name: Change file ownership, group and permissions
   become: true
   ansible.builtin.file:
@@ -156,3 +169,4 @@
 - name: Restart Mariadb service for network changes
   become: true
   command: systemctl restart mariadb
+
