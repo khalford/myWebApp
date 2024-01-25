@@ -5,22 +5,24 @@ The scripts will:
   - Provision a web serving VM(s) using PHP to deliver content from a SQL database.
   - Provision a database serving VM using MariaDB and SSL certificates to communicate.
   - Run a Python script as a service to update the database with info from the Github Rest API.
+  - The webpage will be accessible via a Float IP attatched to the load balancer.
 
 # Setup Instructions:
 ## Prerequisites:
-  - Download a **clouds.yaml** from the Horizon interface on Openstack.
+  - You will need a floating IP in your project available.
+  - Create an **Application Credentials** in Openstack Horizon and download the **clouds.yaml**.
   - Create a VM on the internal network with:
-    - The **clouds.yaml** in the path */home/<fed_id>/.config/clouds.yaml*. Ensure you write your password into the file.
-    - This VM must also be of an Ubuntu image.
+    - The **clouds.yaml** in the path */home/<fed_id>/.config/openstack/clouds.yaml*.
+    - This VM must also be of an Ubuntu image as the setup assumes you're running on Ubuntu.
     - You need a Public/Private Key pair on this VM and in Openstack which does **NOT** have a passphrase.
-  - Run the installation commands on the VM in the internal network.
+  - Run the installation commands from the VM in the internal network.
 
 ### Setup Infrastructure
   1. Clone this repo: `git clone https://github.com/khalford/myWebApp.git`
   1. Change directory to the git repo: `cd myWebApp`
   1. Run **setup.sh** with root privileges: `sudo bash setup.sh`
   1. Now you need to activate the virtual environment created by the setup script: `source ansible-venv/bin/activate`
-  1. Edit the variables in **vars.tfvars**. All of these variables are mandatory. There is a description of each variable in **variables.tf** if you don't know what they are or how to find them.
+  1. Edit the variables in **vars.tfvars**. . There is a description of each variable in **variables.tf**.
   1. Now you need to initialise the directory with Terraform: `terraform init`
   1. Next to plan the Terraform provisioning. Here we use the flag **-var-file=** to specify our input variables and **-out=plan** to save the plan to a file: `terraform plan -out plan -var-file=./vars.tfvars`
   1. Finally, apply the plan: `terraform apply plan`

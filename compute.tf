@@ -11,8 +11,8 @@ resource "local_file" "bastion-key" {
 
 resource "openstack_compute_instance_v2" "bastion_vm" {
         name  = "bastion-vm"
-        image_id        = var.vm_image_id
-        flavor_id       = var.vm_flavor_id
+        image_name        = var.vm_image
+        flavor_name       = var.vm_flavor
         security_groups = ["default"]
         key_pair        = var.ssh_public_key_name
     
@@ -61,8 +61,8 @@ resource "null_resource" "bastion_config" {
 
 resource "openstack_compute_instance_v2" "db_vm" {
         name  = "db-vm"
-        image_id        = var.vm_image_id
-        flavor_id       = var.vm_flavor_id
+        image_name        = var.vm_image
+        flavor_name       = var.vm_flavor
         security_groups = ["default", openstack_networking_secgroup_v2.db_secgroup.name]
         key_pair        = openstack_compute_keypair_v2.bastion_key.name
     
@@ -80,8 +80,8 @@ resource "openstack_compute_instance_v2" "db_vm" {
 resource "openstack_compute_instance_v2" "web_vm" {
         count = var.no_web_vms
         name  = "web-vm-${count.index}"
-        image_id        = var.vm_image_id
-        flavor_id       = var.vm_flavor_id
+        image_name        = var.vm_image
+        flavor_name       = var.vm_flavor
         security_groups = ["default", openstack_networking_secgroup_v2.http_secgroup.name]
         key_pair        = openstack_compute_keypair_v2.bastion_key.name
     
