@@ -113,13 +113,13 @@
   become: true
   fetch: 
     src: /etc/mysql/ca.crt
-    dest: /tmp/ca.crt
+    dest: /tmp
 
 - name: Copy CA key to bastion
   become: true
   fetch: 
     src: /etc/mysql/ca.key
-    dest: /tmp/ca.key
+    dest: /tmp
 
 
 - name: Change file ownership, group and permissions
