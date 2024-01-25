@@ -8,23 +8,23 @@
 - name: Copy private key to web_vm
   become: true
   copy:
-    src: /home/oxg98278/.ssh/id_rsa
-    dest: /home/oxg98278/.ssh/id_rsa
+    src: /home/{{ fed_id }}/.ssh/id_rsa
+    dest: /home/{{ fed_id }}/.ssh/id_rsa
 
 - name: Change permissions on key
   become: true
   ansible.builtin.file:
-    path: /home/oxg98278/.ssh/id_rsa
+    path: /home/{{ fed_id }}/.ssh/id_rsa
     state: file
     mode: '0600'
 
 - name: Copy CA cert
   become: true
-  command: sftp -i .ssh/id_rsa oxg98278@"{{ host_vars[groups['db_servers'][0]].ansible_host }}":/etc/mysql/ca.crt /home/github_scrape/auth
+  command: sftp -i .ssh/id_rsa {{ fed_id }}@"{{ host_vars[groups['db_servers'][0]].ansible_host }}":/etc/mysql/ca.crt /home/github_scrape/auth
 
 - name: Copy CA key
   become: true
-  command: sftp -i .ssh/id_rsa oxg98278@"{{ host_vars[groups['db_servers'][0]].ansible_host }}":/etc/mysql/ca.key /home/github_scrape/auth
+  command: sftp -i .ssh/id_rsa {{ fed_id }}@"{{ host_vars[groups['db_servers'][0]].ansible_host }}":/etc/mysql/ca.key /home/github_scrape/auth
 
 - name: Create client private key
   become: true
