@@ -8,7 +8,7 @@ only_clouds:
 strict: true
 private: true
 compose:
-  ansible_user: "{{ fed_id }}"
+  ansible_user: '"{{ fed_id }}"'
 
 groups:
   web_servers: | 
