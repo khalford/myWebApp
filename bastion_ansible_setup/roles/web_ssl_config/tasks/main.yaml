@@ -1,16 +1,3 @@
-- name: Copy private key to web_vm
-  become: true
-  copy:
-    src: /home/"{{fed_id}}"/.ssh/id_rsa
-    dest: /home/"{{fed_id}}"/.ssh/id_rsa
-
-- name: Change permissions on key
-  become: true
-  ansible.builtin.file:
-    path: /home/"{{fed_id}}"/.ssh/id_rsa
-    state: file
-    mode: '0600'
-
 - name: Create client private key
   become: true
   community.crypto.openssl_privatekey:
