@@ -1,26 +1,26 @@
 - name: Copy private key to web_vm
   become: true
   copy:
-    src: ~/.ssh/id_rsa
-    dest: ~/.ssh/id_rsa
+    src: /home/"{{fed_id}}"/.ssh/id_rsa
+    dest: /home/"{{fed_id}}"/.ssh/id_rsa
 
 - name: Change permissions on key
   become: true
   ansible.builtin.file:
-    path: ~/.ssh/id_rsa
+    path: /home/"{{fed_id}}"/.ssh/id_rsa
     state: file
     mode: '0600'
 
 - name: Create client private key
   become: true
   community.crypto.openssl_privatekey:
-    path: ~/client.key
+    path: /home/"{{fed_id}}"/client.key
 
 - name: Copy CA cert from bastion to web
   become: true
   copy:
     src: /tmp/ca.crt
-    dest: ~/ca.crt
+    dest: /home/"{{fed_id}}"/ca.crt
 
 - name: Copy CA key from bastion to web
   become: true
@@ -31,7 +31,7 @@
 - name: Create client certificate signing request (CSR) for CA certificate
   become: true
   community.crypto.openssl_csr_pipe:
-    privatekey_path: ~/client.key
+    privatekey_path: /home/"{{fed_id}}"/client.key
     common_name: "lamp-db"
     use_common_name_for_san: false
     basic_constraints:
@@ -45,21 +45,21 @@
 - name: Create client self-signed CA certificate from CSR
   become: true
   community.crypto.x509_certificate:
-    path: ~/client.crt
+    path: /home/"{{fed_id}}"/client.crt
     csr_content: "{{ ca_csr.csr }}"
     privatekey_path: ~/client.key
     provider: ownca
-    ownca_path: ~/ca.crt
+    ownca_path: /home/"{{fed_id}}"/ca.crt
     ownca_privatekey_path: /tmp/ca.key
 
 - name: Change file ownership, group and permissions
   become: true
   ansible.builtin.file:
-    path: ~/ca.crt
+    path: /home/"{{fed_id}}"/ca.crt
     mode: '0644'
 
 - name: Change file ownership, group and permissions
   become: true
   ansible.builtin.file:
-    path: ~/ca.key
+    path: /home/"{{fed_id}}"/ca.key
     mode: '0644'
