@@ -25,7 +25,12 @@ resource "openstack_compute_instance_v2" "bastion_vm" {
 }
 
 resource "null_resource" "bastion_config" {
-    depends_on = [ openstack_lb_member_v2.ssh_member, openstack_compute_instance_v2.bastion_vm ]
+    depends_on = [ 
+        openstack_lb_member_v2.ssh_member,
+        openstack_compute_instance_v2.bastion_vm,
+        openstack_networking_floatingip_associate_v2.lb_fip,
+        openstack_networking_router_interface_v2.webapp_router_interface
+        ]
     provisioner "file" {
             source      = "./bastion_key"
             destination = "/home/${var.fed_id}/.ssh/id_rsa"
