@@ -48,5 +48,11 @@
 - name: Change file ownership, group and permissions
   become: true
   ansible.builtin.file:
-    path: /home/{{ fed_id }}/ca.key
+    path: /home/{{ fed_id }}/client.key
+    mode: '0644'
+
+- name: Change file ownership, group and permissions
+  become: true
+  ansible.builtin.file:
+    path: /home/{{ fed_id }}/client.crt
     mode: '0644'
