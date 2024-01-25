@@ -28,7 +28,7 @@ resource "openstack_networking_subnet_v2" "webapp_subnet" {
 
 resource "openstack_networking_router_v2" "webapp_router" {
   name = "webapp-router"
-  external_network_id = var.external_network
+  external_network_id = var.external_network_id
 }
 
 resource "openstack_networking_router_interface_v2" "webapp_router_interface" {

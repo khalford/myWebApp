@@ -9,10 +9,9 @@ variable "lb_float_ip" {
   type = string 
 }
 
-variable "external_network" {
-    description = "The name of the external network in your project."
+variable "external_network_id" {
+    description = "The UUID of the external network in your project."
     type = string
-    default = "External"
 }
 
 variable "ssh_public_key_name" {
