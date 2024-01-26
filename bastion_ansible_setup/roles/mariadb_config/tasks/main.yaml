@@ -110,6 +110,34 @@
     regexp: "#ssl-ca = /etc/mysql/cacert.pem"
     replace: "ssl-ca = /etc/mysql/ca.crt"
 
+- name: Move keys and certs to mysql folder
+  become: true
+  copy:
+    src: /tmp/ca.crt
+    dest: /etc/mysql/ca.crt
+    remote_source: true
+
+- name: Move keys and certs to mysql folder
+  become: true
+  copy:
+    src: /tmp/server.crt
+    dest: /etc/mysql/server.crt
+    remote_source: true
+
+- name: Move keys and certs to mysql folder
+  become: true
+  copy:
+    src: /tmp/server.key
+    dest: /etc/mysql/server.key
+    remote_source: true
+
+- name: Change file ownership, group and permissions
+  ansible.builtin.file:
+    path: /etc/mysql/
+    owner: mysql
+    group: mysql
+    mode: '0644'
+
 - name: Restart Mariadb service for network changes
   become: true
   command: systemctl restart mariadb

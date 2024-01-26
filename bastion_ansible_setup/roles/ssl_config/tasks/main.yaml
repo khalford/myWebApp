@@ -89,22 +89,28 @@
   become: true
   copy:
     src: /home/{{fed_id}}/auth/ca.crt
-    dest: /etc/mysql/ca.crt
+    dest: /tmp/ca.crt
   delegate_to: db-vm
 
 - name: Copy server.crt to server
   become: true
   copy:
     src: /home/{{fed_id}}/auth/server.crt
-    dest: /etc/mysql/server.crt
+    dest: /tmp/server.crt
   delegate_to: db-vm
 
 - name: Copy server.key to server
   become: true
   copy:
     src: /home/{{fed_id}}/auth/server.key
-    dest: /etc/mysql/server.key
+    dest: /tmp/server.key
   delegate_to: db-vm
+
+- name: Create auth directory
+  file:
+    path: /home/{{fed_id}}/auth
+    state: directory
+  delegate_to: web-vm-0
 
 - name: Copy ca.crt to client
   become: true
