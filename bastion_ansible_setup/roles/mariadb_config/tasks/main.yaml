@@ -132,6 +132,7 @@
     remote_src: true
 
 - name: Change file ownership, group and permissions
+  become: true
   ansible.builtin.file:
     path: /etc/mysql/
     owner: mysql
