@@ -82,64 +82,6 @@
       UNIQUE (username)
       )
 
-- name: Create server private key
-  become: true
-  community.crypto.openssl_privatekey:
-    path: /etc/mysql/ca.key
-
-- name: Create server certificate signing request (CSR) for CA certificate
-  become: true
-  community.crypto.openssl_csr_pipe:
-    privatekey_path: /etc/mysql/ca.key
-    common_name: "lamp-db"
-    use_common_name_for_san: false
-    basic_constraints:
-      - 'CA:TRUE'
-    basic_constraints_critical: true
-    key_usage:
-      - keyCertSign
-    key_usage_critical: true
-  register: ca_csr
-
-- name: Create server self-signed CA certificate from CSR
-  become: true
-  community.crypto.x509_certificate:
-    path: /etc/mysql/ca.crt
-    csr_content: "{{ ca_csr.csr }}"
-    privatekey_path: /etc/mysql/ca.key
-    provider: selfsigned
-
-- name: Copy CA cert to bastion
-  become: true
-  fetch: 
-    src: /etc/mysql/ca.crt
-    dest: /tmp/
-    flat: true
-
-- name: Copy CA key to bastion
-  become: true
-  fetch: 
-    src: /etc/mysql/ca.key
-    dest: /tmp/
-    flat: true
-
-
-- name: Change file ownership, group and permissions
-  become: true
-  ansible.builtin.file:
-    path: /etc/mysql/ca.crt
-    owner: mysql
-    group: mysql
-    mode: '0644'
-
-- name: Change file ownership, group and permissions
-  become: true
-  ansible.builtin.file:
-    path: /etc/mysql/ca.key
-    owner: mysql
-    group: mysql
-    mode: '0644'
-
 - name: Enable remote config
   become: true
   replace:
@@ -152,14 +94,14 @@
   replace:
     path: /etc/mysql/mariadb.conf.d/50-server.cnf
     regexp: "#ssl-cert = /etc/mysql/server-cert.pem"
-    replace: "ssl-cert = /etc/mysql/ca.crt"
+    replace: "ssl-cert = /etc/mysql/server.crt"
 
 - name: Enable ssl config
   become: true
   replace:
     path: /etc/mysql/mariadb.conf.d/50-server.cnf
     regexp: "#ssl-key = /etc/mysql/server-key.pem"
-    replace: "ssl-key = /etc/mysql/ca.key"
+    replace: "ssl-key = /etc/mysql/server.key"
 
 - name: Enable ssl config
   become: true

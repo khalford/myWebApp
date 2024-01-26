@@ -6,5 +6,6 @@
       ansible.builtin.wait_for_connection:
         timeout: 60
 
+- import_playbook: ssl_config.yaml
 - import_playbook: deploy_database.yaml
 - import_playbook: deploy_webserver.yaml

@@ -1,0 +1,128 @@
+- name: Create auth directory
+  file:
+    path: /home/{{fed_id}}/auth
+    state: directory
+
+- name: Create CA private key
+  community.crypto.openssl_privatekey:
+    path: /home/{{ fed_id }}/auth/ca.key
+
+- name: Create CA CSR for CA certificate
+  community.crypto.openssl_csr_pipe:
+    privatekey_path: /home/{{fed_id}}/auth/ca.key
+    common_name: "lamp-db"
+    use_common_name_for_san: false
+    basic_constraints:
+      - 'CA:TRUE'
+    basic_constraints_critical: true
+    key_usage:
+      - keyCertSign
+    key_usage_critical: true
+  register: ca_csr
+
+- name: Create CA self-signed CA certificate from CSR
+  community.crypto.x509_certificate:
+    path: /home/{{fed_id}}/auth/ca.crt
+    csr_content: "{{ ca_csr.csr }}"
+    privatekey_path: /home/{{fed_id}}/auth/ca.key
+    provider: selfsigned
+
+- name: Create server private key
+  become: true
+  community.crypto.openssl_privatekey:
+    path: /home/{{ fed_id }}/auth/server.key
+
+- name: Create server certificate signing request (CSR) for CA certificate
+  become: true
+  community.crypto.openssl_csr_pipe:
+    privatekey_path: /home/{{ fed_id }}/auth/server.key
+    common_name: "{{hostvars[groups['db_servers'][0]].ansible_host}}"
+    use_common_name_for_san: false
+    basic_constraints:
+      - 'CA:TRUE'
+    basic_constraints_critical: true
+    key_usage:
+      - keyCertSign
+    key_usage_critical: true
+  register: server_csr
+
+- name: Create server self-signed CA certificate from CSR
+  become: true
+  community.crypto.x509_certificate:
+    path: /home/{{ fed_id }}/auth/server.crt
+    csr_content: "{{ server_csr.csr }}"
+    privatekey_path: /home/{{ fed_id }}/auth/server.key
+    provider: ownca
+    ownca_path: /home/{{ fed_id }}/auth/ca.crt
+    ownca_privatekey_path: /home/{{ fed_id }}/auth/ca.key
+
+- name: Create client private key
+  become: true
+  community.crypto.openssl_privatekey:
+    path: /home/{{ fed_id }}/auth/client.key
+
+- name: Create client certificate signing request (CSR) for CA certificate
+  become: true
+  community.crypto.openssl_csr_pipe:
+    privatekey_path: /home/{{ fed_id }}/auth/client.key
+    common_name: "admin"
+    use_common_name_for_san: false
+    basic_constraints:
+      - 'CA:TRUE'
+    basic_constraints_critical: true
+    key_usage:
+      - keyCertSign
+    key_usage_critical: true
+  register: client_csr
+
+- name: Create client self-signed CA certificate from CSR
+  become: true
+  community.crypto.x509_certificate:
+    path: /home/{{ fed_id }}/auth/client.crt
+    csr_content: "{{ client_csr.csr }}"
+    privatekey_path: /home/{{ fed_id }}/auth/client.key
+    provider: ownca
+    ownca_path: /home/{{ fed_id }}/auth/ca.crt
+    ownca_privatekey_path: /home/{{fed_id}}/auth/ca.key
+
+- name: Copy ca.crt to server
+  become: true
+  copy:
+    src: /home/{{fed_id}}/auth/ca.crt
+    dest: /etc/mysql/ca.crt
+  delegate_to: db-vm
+
+- name: Copy server.crt to server
+  become: true
+  copy:
+    src: /home/{{fed_id}}/auth/server.crt
+    dest: /etc/mysql/server.crt
+  delegate_to: db-vm
+
+- name: Copy server.key to server
+  become: true
+  copy:
+    src: /home/{{fed_id}}/auth/server.key
+    dest: /etc/mysql/server.key
+  delegate_to: db-vm
+
+- name: Copy ca.crt to client
+  become: true
+  copy:
+    src: /home/{{fed_id}}/auth/ca.crt
+    dest: /home/{{fed_id}}/ca.crt
+  delegate_to: web-vm-0
+
+- name: Copy client.crt to client
+  become: true
+  copy:
+    src: /home/{{fed_id}}/auth/client.crt
+    dest: /home/{{fed_id}}/client.crt
+  delegate_to: web-vm-0
+
+- name: Copy client.key to client
+  become: true
+  copy:
+    src: /home/{{fed_id}}/auth/client.key
+    dest: /home/{{fed_id}}/client.key
+  delegate_to: web-vm-0

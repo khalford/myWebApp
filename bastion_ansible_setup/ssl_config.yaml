@@ -1,0 +1,5 @@
+---
+- name: Run SSL config
+  hosts: localhost
+  roles:
+  - ssl_config 
