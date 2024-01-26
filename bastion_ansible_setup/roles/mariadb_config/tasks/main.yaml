@@ -115,21 +115,21 @@
   copy:
     src: /tmp/ca.crt
     dest: /etc/mysql/ca.crt
-    remote_source: true
+    remote_src: true
 
 - name: Move keys and certs to mysql folder
   become: true
   copy:
     src: /tmp/server.crt
     dest: /etc/mysql/server.crt
-    remote_source: true
+    remote_src: true
 
 - name: Move keys and certs to mysql folder
   become: true
   copy:
     src: /tmp/server.key
     dest: /etc/mysql/server.key
-    remote_source: true
+    remote_src: true
 
 - name: Change file ownership, group and permissions
   ansible.builtin.file:
