@@ -3,5 +3,4 @@
   hosts: web_servers
   roles:
   - vm_config
-  - web_ssl_config
   - apache2_config
