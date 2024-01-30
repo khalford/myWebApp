@@ -1,0 +1,84 @@
+/*
+Colour Palette
+Nav Bar: #393e46
+Nav Buttons: #bbe4e9
+Main Background: #fafafa 
+*/
+
+* {
+    font-family: sans-serif;
+}
+
+body {
+    margin: 0px;
+    background-color: #fafafa;
+}
+
+nav {
+    display: inline-flex;
+    background-color: #393e46;
+    width: 100%;
+    justify-content: center;
+}
+
+nav a {
+    background-color: #bbe4e9;
+    margin: 10px 20px;
+    padding: 3px;
+    border-radius: 5px;
+    color: #393e46;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+nav a:hover {
+    /* background-color: #9fd9e0; */
+    background-color: #9fd9e0;
+}
+
+.content {
+    display: flex;
+    margin: 10px;
+    flex-direction: column;
+    text-align: center;
+}
+
+.content h2 {
+    color: red;
+}
+
+.login-div {
+    display: flex;
+    justify-content: center;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    margin-top: 20px;
+    padding: 10px;
+    width: 30%;
+    max-width: 180px;;
+    background-color: #e4f1fe;
+    border-radius: 5px;
+}
+
+.login-form * {
+    margin: 1px 0px;
+}
+
+.search {
+    display: inline;
+    margin-top: 20px;
+    padding: 10px;
+    width: 30%;
+    max-width: 100%;
+    background-color: #e4f1fe;
+    border-radius: 5px;
+}
+
+.search * {
+    margin: 1px 0px;
+}
+
+

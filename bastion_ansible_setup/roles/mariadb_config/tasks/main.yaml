@@ -86,7 +86,7 @@
   become: true
   replace:
     path: /etc/mysql/mariadb.conf.d/50-server.cnf
-    regexp: "bind-address=127.0.0.1"
+    regexp: "bind-address(?:\s|(?!^)\G)[^=\s]*\K\h+= 127.0.0.1"
     replace: "bind-address=192.168.100.*"
 
 - name: Enable ssl config
@@ -137,7 +137,7 @@
     path: /etc/mysql/
     owner: mysql
     group: mysql
-    mode: '0644'
+    mode: '0744'
 
 - name: Restart Mariadb service for network changes
   become: true

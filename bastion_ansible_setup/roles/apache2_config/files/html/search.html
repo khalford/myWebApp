@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>HTML 5 Boilerplate</title>
+    <link rel="stylesheet" href="../styles/index.css">
+  </head>
+  <body>
+    <nav>
+      <a href="login.html">My account</a>
+      <a href="index.html">Repo of the Day</a>
+      <a href="search.html">Search Repo</a>
+    </nav>
+    <div class="search">
+      <script src="../js/search.js"></script>
+      <label for="search-bar">Enter the Repository name in format: owner/repo</label>
+      <input type="text" name="search-bar" id="search-string">
+      <button type="submit" onclick="search()">Search</button>
+      <p id="search-status"></p>
+      <ol id="results"></ol>
+    </div>
+  </body>
+</html>
