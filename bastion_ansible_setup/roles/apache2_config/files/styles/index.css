@@ -68,17 +68,41 @@ nav a:hover {
 }
 
 .search {
-    display: inline;
-    margin-top: 20px;
+    margin: 20px auto;
+    width: 70%;
     padding: 10px;
-    width: 30%;
-    max-width: 100%;
     background-color: #e4f1fe;
-    border-radius: 5px;
+    border-radius: 7px;
+    text-align: center;
 }
 
 .search * {
-    margin: 1px 0px;
+    margin: 3px 5px;
 }
 
+#search-status-span {
+    opacity: 60%;
+    border-radius: 5px;
+    padding: 2px;
+}
 
+#results {
+    background-color: #bbe4e9;
+    border-radius: 10px;
+    opacity: 95%;
+    width: 35%;
+    min-width: 350px;
+    margin: 10px auto;
+}
+
+#results li {
+    padding: 2px 0px;
+}
+
+#results li * {
+    margin: 0px 2px;
+}
+
+#results li a {
+    text-decoration: none;
+}

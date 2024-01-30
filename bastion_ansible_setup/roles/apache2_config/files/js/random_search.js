@@ -1,22 +1,21 @@
-function search(){
-    const search_string = document.getElementById('search-string').value;
-    const owner = search_string.split('/')[0];
-    const repo = search_string.split('/')[1];
+function http_request() {
+    const token = ""
+    var id = Math.floor(Math.random() * 1000000000);
+    // id = '491438292'
+    const url = `https://api.github.com/repositories/${id}/contributors`;
+    console.log(url)
     const http = new XMLHttpRequest();
-    const url = `https://api.github.com/repos/${owner}/${repo}/contributors`;
     http.open('GET', url);
+    http.setRequestHeader('Authorization', 'Bearer ' + token);
     http.send();
     http.onreadystatechange = function(){
-        if(this.readyState==4 && this.status==200){
-            var status_text = document.getElementById("search-status")
-            status_text.innerText = ""
+        if (this.readyState==4 && this.status==200) {
             const text_data = http.responseText;
             const json_data = JSON.parse(text_data);
             display(json_data)
-        } else if (this.readyState==4 && this.status==404){
-            var status_text = document.getElementById("search-status")
-            status_text.innerText = "Repo was not found. Check for typos and that the Repo stil exists."
-        }
+        } else if (this.readyState==4 && this.status==404) {
+            http_request()
+        };
     };
 };
 
@@ -38,3 +37,5 @@ function display(json_data){
         list.appendChild(item);
     };
 };
+
+http_request()
