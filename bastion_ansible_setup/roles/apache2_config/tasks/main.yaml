@@ -15,14 +15,6 @@
   ansible.builtin.copy:
     src: webserver.conf
     dest: /etc/apache2/sites-available
-
-- name: Prioritise index.php over index.html
-  become: true
-  lineinfile:
-      path: /etc/apache2/mods-enabled/dir.conf
-      regexp: '^(.*)DirectoryIndex index.html index.cgi index.pl index.php index.xhtml index.htm(.*)$'
-      line: 'DirectoryIndex index.php index.html index.cgi index.pl index.xhtml index.htm'
-      backrefs: yes
   
 - name: Enable new site
   become: true
@@ -44,9 +36,11 @@
     src: '{{item}}'
     dest: '/var/www/myWeb'
   loop:
-    - index.html
     - SCD-Openstack-Utils.php
     - st2-cloud-pack.php
+    - html
+    - js
+    - styles
 
 - name: Reload Apache2 Service
   become: true
