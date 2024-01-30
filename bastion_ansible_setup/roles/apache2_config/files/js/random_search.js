@@ -33,7 +33,7 @@ function display(json_data){
         let obj = json_data[i];
         var item = document.createElement('li');
         item.className = 'commit-entry-search'
-        item.innerHTML = `<img height='15' width='15' src='${obj.avatar_url}'/><a class='commit-item' href='${obj.profile_url}'>${obj.login}</a> commits: ${obj.contributions}`;
+        item.innerHTML = `<img height='15' width='15' src='${obj.avatar_url}'/><a class='commit-item' href='${obj.html_url}'>${obj.login}</a> commits: ${obj.contributions}`;
         list.appendChild(item);
     };
 };
