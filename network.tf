@@ -90,6 +90,7 @@ resource "openstack_lb_listener_v2" "http_listener" {
 }
 
 resource "openstack_lb_pool_v2" "http_pool" {
+  name = "http-pool"
   protocol    = "HTTP"
   lb_method   = "ROUND_ROBIN"
   listener_id = openstack_lb_listener_v2.http_listener.id
@@ -114,6 +115,7 @@ resource "openstack_lb_listener_v2" "ssh_listener" {
 }
 
 resource "openstack_lb_pool_v2" "ssh_pool" {
+  name = "ssl-pool"
   protocol    = "TCP"
   lb_method   = "SOURCE_IP"
   listener_id = openstack_lb_listener_v2.ssh_listener.id
