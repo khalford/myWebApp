@@ -5,7 +5,7 @@
 
 - name: Create CA private key
   community.crypto.openssl_privatekey:
-    path: /home/{{ fed_id }}/auth/ca.key
+    path: /home/ubuntu/auth/ca.key
 
 - name: Create CA CSR for CA certificate
   community.crypto.openssl_csr_pipe:
@@ -29,11 +29,11 @@
 
 - name: Create server private key
   community.crypto.openssl_privatekey:
-    path: /home/{{ fed_id }}/auth/server.key
+    path: /home/ubuntu/auth/server.key
 
 - name: Create server certificate signing request (CSR) for CA certificate
   community.crypto.openssl_csr_pipe:
-    privatekey_path: /home/{{ fed_id }}/auth/server.key
+    privatekey_path: /home/ubuntu/auth/server.key
     common_name: "{{hostvars[groups['db_servers'][0]].ansible_host}}"
     use_common_name_for_san: false
     basic_constraints:
@@ -43,20 +43,20 @@
 
 - name: Create server self-signed CA certificate from CSR
   community.crypto.x509_certificate:
-    path: /home/{{ fed_id }}/auth/server.crt
+    path: /home/ubuntu/auth/server.crt
     csr_content: "{{ server_csr.csr }}"
-    privatekey_path: /home/{{ fed_id }}/auth/server.key
+    privatekey_path: /home/ubuntu/auth/server.key
     provider: ownca
-    ownca_path: /home/{{ fed_id }}/auth/ca.crt
-    ownca_privatekey_path: /home/{{ fed_id }}/auth/ca.key
+    ownca_path: /home/ubuntu/auth/ca.crt
+    ownca_privatekey_path: /home/ubuntu/auth/ca.key
 
 - name: Create client private key
   community.crypto.openssl_privatekey:
-    path: /home/{{ fed_id }}/auth/client.key
+    path: /home/ubuntu/auth/client.key
 
 - name: Create client certificate signing request (CSR) for CA certificate
   community.crypto.openssl_csr_pipe:
-    privatekey_path: /home/{{ fed_id }}/auth/client.key
+    privatekey_path: /home/ubuntu/auth/client.key
     common_name: "admin"
     use_common_name_for_san: false
     basic_constraints:
@@ -66,11 +66,11 @@
 
 - name: Create client self-signed CA certificate from CSR
   community.crypto.x509_certificate:
-    path: /home/{{ fed_id }}/auth/client.crt
+    path: /home/ubuntu/auth/client.crt
     csr_content: "{{ client_csr.csr }}"
-    privatekey_path: /home/{{ fed_id }}/auth/client.key
+    privatekey_path: /home/ubuntu/auth/client.key
     provider: ownca
-    ownca_path: /home/{{ fed_id }}/auth/ca.crt
+    ownca_path: /home/ubuntu/auth/ca.crt
     ownca_privatekey_path: /home/{{fed_id}}/auth/ca.key
 
 - name: Copy ca.crt to server

@@ -59,7 +59,7 @@ resource "null_resource" "bastion_config" {
     }
 
     provisioner "local-exec" {
-      command = "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -e 'ansible_port=2222 lb_fip=${var.lb_float_ip} fed_id=${var.fed_id}' -i ${var.lb_float_ip}, play.yaml"
+      command = "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -e 'ansible_port=2222 lb_fip=${var.lb_float_ip}' -i ${var.lb_float_ip}, play.yaml"
         }
 }
 

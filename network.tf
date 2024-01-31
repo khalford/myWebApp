@@ -115,7 +115,7 @@ resource "openstack_lb_listener_v2" "ssh_listener" {
 }
 
 resource "openstack_lb_pool_v2" "ssh_pool" {
-  name = "ssl-pool"
+  name = "ssh-pool"
   protocol    = "TCP"
   lb_method   = "SOURCE_IP"
   listener_id = openstack_lb_listener_v2.ssh_listener.id

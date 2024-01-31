@@ -36,7 +36,7 @@
 
     - name: Tell user next steps
       ansible.builtin.debug:
-        msg: "Please SSH onto the Bastion VM at {{ lb_fip }} Port: 2222 You can use: ssh {{ fed_id }}@{{ lb_fip }} -p 2222"
+        msg: "Please SSH onto the Bastion VM at {{ lb_fip }} Port: 2222 You can use: ssh ubuntu@{{ lb_fip }} -p 2222"
 
 - hosts: localhost
   tasks:

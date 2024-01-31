@@ -36,8 +36,3 @@ variable "vm_flavor" {
     type = string
     default = "l3.nano"
 }
-
-variable "fed_id" {
-  description = "Your Fed ID used in the clouds.yaml."
-  type = string
-}
