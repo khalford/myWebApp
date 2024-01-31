@@ -47,8 +47,9 @@
   become: true
   mysql_user:
     name: admin
-    password: "{{ lookup('ansible.builtin.password', '/tmp/passwordfile', chars=['ascii_letters']) }}"
-    priv: 'github_stats.*:ALL'
+    priv: '*.*:ALL,GRANT'
+    tls_requires:
+      x509:
     host: '%'
     state: present    
 
@@ -86,8 +87,15 @@
   become: true
   replace:
     path: /etc/mysql/mariadb.conf.d/50-server.cnf
-    regexp: "bind-address(?:\s|(?!^)\G)[^=\s]*\K\h+= 127.0.0.1"
-    replace: "bind-address=192.168.100.*"
+    regexp: "bind-address            = 127.0.0.1"
+    replace: "#bind-address            = 127.0.0.1"
+
+- name: Enable remote config
+  become: true
+  replace:
+    path: /etc/mysql/mariadb.conf.d/50-server.cnf
+    regexp: "#require-secure-transport = on"
+    replace: "require-secure-transport = on"
 
 - name: Enable ssl config
   become: true
