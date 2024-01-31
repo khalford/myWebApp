@@ -44,7 +44,7 @@ nav a:hover {
 }
 
 .content h2 {
-    color: red;
+    color: #f74040;
 }
 
 .login-div {
@@ -104,5 +104,28 @@ nav a:hover {
 }
 
 #results li a {
+    text-decoration: none;
+}
+
+#search-results {
+    display: flex;
+    flex-direction: column;
+}
+
+#search-results a:link {
+    color: #f74040;
+}
+
+#repo-name {
+    background-color: #bbe4e9;
+    border-radius: 10px;
+    opacity: 95%;
+    width: 35%;
+    min-width: 350px;
+    margin: 10px auto;
+    text-align: center;
+}
+
+#repo-name a {
     text-decoration: none;
 }
