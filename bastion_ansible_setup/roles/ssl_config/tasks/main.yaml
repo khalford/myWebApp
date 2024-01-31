@@ -1,6 +1,6 @@
 - name: Create auth directory
   file:
-    path: /home/{{fed_id}}/auth
+    path: /home/ubuntu/auth
     state: directory
 
 - name: Create CA private key
@@ -9,7 +9,7 @@
 
 - name: Create CA CSR for CA certificate
   community.crypto.openssl_csr_pipe:
-    privatekey_path: /home/{{fed_id}}/auth/ca.key
+    privatekey_path: /home/ubuntu/auth/ca.key
     common_name: "lamp-db"
     use_common_name_for_san: false
     basic_constraints:
@@ -22,9 +22,9 @@
 
 - name: Create CA self-signed CA certificate from CSR
   community.crypto.x509_certificate:
-    path: /home/{{fed_id}}/auth/ca.crt
+    path: /home/ubuntu/auth/ca.crt
     csr_content: "{{ ca_csr.csr }}"
-    privatekey_path: /home/{{fed_id}}/auth/ca.key
+    privatekey_path: /home/ubuntu/auth/ca.key
     provider: selfsigned
 
 - name: Create server private key
@@ -71,19 +71,19 @@
     privatekey_path: /home/ubuntu/auth/client.key
     provider: ownca
     ownca_path: /home/ubuntu/auth/ca.crt
-    ownca_privatekey_path: /home/{{fed_id}}/auth/ca.key
+    ownca_privatekey_path: /home/ubuntu/auth/ca.key
 
 - name: Copy ca.crt to server
   become: true
   copy:
-    src: /home/{{fed_id}}/auth/ca.crt
+    src: /home/ubuntu/auth/ca.crt
     dest: /tmp/ca.crt
   delegate_to: db-vm
 
 - name: Copy server.crt to server
   become: true
   copy:
-    src: /home/{{fed_id}}/auth/server.crt
+    src: /home/ubuntu/auth/server.crt
     dest: /tmp/server.crt
   delegate_to: db-vm
 
@@ -92,33 +92,33 @@
 - name: Copy server.key to server
   become: true
   copy:
-    src: /home/{{fed_id}}/auth/server.key
+    src: /home/ubuntu/auth/server.key
     dest: /tmp/server.key
   delegate_to: db-vm
 
 - name: Create auth directory
   file:
-    path: /home/{{fed_id}}/auth
+    path: /home/ubuntu/auth
     state: directory
   delegate_to: web-vm-0
 
 - name: Copy ca.crt to client
   become: true
   copy:
-    src: /home/{{fed_id}}/auth/ca.crt
-    dest: /home/{{fed_id}}/ca.crt
+    src: /home/ubuntu/auth/ca.crt
+    dest: /home/ubuntu/ca.crt
   delegate_to: web-vm-0
 
 - name: Copy client.crt to client
   become: true
   copy:
-    src: /home/{{fed_id}}/auth/client.crt
-    dest: /home/{{fed_id}}/client.crt
+    src: /home/ubuntu/auth/client.crt
+    dest: /home/ubuntu/client.crt
   delegate_to: web-vm-0
 
 - name: Copy client.key to client
   become: true
   copy:
-    src: /home/{{fed_id}}/auth/client.key
-    dest: /home/{{fed_id}}/client.key
+    src: /home/ubuntu/auth/client.key
+    dest: /home/ubuntu/client.key
   delegate_to: web-vm-0

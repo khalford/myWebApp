@@ -33,12 +33,12 @@ resource "null_resource" "bastion_config" {
         ]
     provisioner "file" {
             source      = "./bastion_key"
-            destination = "/home/${var.fed_id}/.ssh/id_rsa"
+            destination = "/home/ubuntu/.ssh/id_rsa"
 
             connection {
                 type     = "ssh"
-                user     = "${var.fed_id}"
-                private_key = file("/home/${var.fed_id}/.ssh/id_rsa")
+                user     = "ubuntu"
+                private_key = file("/home/ubuntu/.ssh/id_rsa")
                 host     = var.lb_float_ip
                 port = 2222
                 timeout = "60s"
@@ -46,12 +46,12 @@ resource "null_resource" "bastion_config" {
         }
         
     provisioner "remote-exec" {
-      inline = [ "sudo chmod 600 /home/${var.fed_id}/.ssh/id_rsa" ]
+      inline = [ "sudo chmod 600 /home/ubuntu/.ssh/id_rsa" ]
 
       connection {
                 type     = "ssh"
-                user     = "${var.fed_id}"
-                private_key = file("/home/${var.fed_id}/.ssh/id_rsa")
+                user     = "ubuntu"
+                private_key = file("/home/ubuntu/.ssh/id_rsa")
                 host     = var.lb_float_ip
                 port = 2222
                 timeout = "60s"
